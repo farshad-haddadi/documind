@@ -1,8 +1,6 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Query
 
-from app.db.session import get_db
-from app.services.retrieval_service import RetrievalService
+from app.services.search_service import SearchService
 
 router = APIRouter(
     prefix="/query",
@@ -12,21 +10,12 @@ router = APIRouter(
 
 @router.get("/chunks")
 def get_chunks(
-    limit: int = 5,
-    db: Session = Depends(get_db),
+    q: str = Query(..., description="Search query"),
+    top_k: int = Query(5, ge=1, le=20),
 ):
-    service = RetrievalService()
+    service = SearchService()
 
-    chunks = service.retrieve(
-        db=db,
-        query="test",
-        limit=limit,
+    return service.search(
+        query=q,
+        top_k=top_k,
     )
-
-    return [
-        {
-            "id": chunk.id,
-            "text": chunk.text[:200],
-        }
-        for chunk in chunks
-    ]
