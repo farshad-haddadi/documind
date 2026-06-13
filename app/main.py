@@ -15,7 +15,7 @@ settings = get_settings()
 
 app = FastAPI(
     title=settings.app_name,
-    description="Production Agentic RAG Platform",
+    description="Production-Style Conversational RAG Platform",
     version=settings.app_version,
     debug=settings.debug,
 )
