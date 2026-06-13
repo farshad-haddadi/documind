@@ -1,5 +1,3 @@
-import threading
-
 from fastapi import APIRouter, BackgroundTasks, Depends, File, UploadFile
 
 from sqlalchemy.orm import Session
