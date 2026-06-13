@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     app_version: str = "0.1.0"
     debug: bool = True
 
+    openai_api_key: str
+    openai_model: str = "gpt-4.1-mini"
+
     database_url: str
 
     embedding_model: str = "BAAI/bge-small-en-v1.5"
