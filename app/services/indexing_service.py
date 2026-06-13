@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import faiss
 import numpy as np
 
@@ -34,7 +36,10 @@ class IndexingService:
             index = faiss.IndexFlatL2(self.dimension)
             index.add(vectors)
 
-            faiss.write_index(index, self.settings.faiss_index_path)
+            index_path = Path(self.settings.faiss_index_path)
+            index_path.parent.mkdir(parents=True, exist_ok=True)
+
+            faiss.write_index(index, str(index_path))
 
             for faiss_id, chunk in enumerate(chunks):
                 chunk.faiss_index_id = faiss_id
@@ -45,6 +50,7 @@ class IndexingService:
 
         finally:
             db.close()
+
 
 if __name__ == "__main__":
     service = IndexingService()

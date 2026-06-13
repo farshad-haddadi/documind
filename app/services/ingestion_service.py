@@ -8,6 +8,9 @@ from app.db.session import SessionLocal
 
 class IngestionService:
     async def ingest_document(self, document_id: str) -> int:
+        return self.ingest_document_sync(document_id=document_id)
+
+    def ingest_document_sync(self, document_id: str) -> int:
         db = SessionLocal()
 
         try:
@@ -15,6 +18,13 @@ class IngestionService:
 
             if document is None:
                 raise ValueError(f"Document not found: {document_id}")
+
+            document.status = "processing"
+            db.commit()
+
+            db.query(Chunk).filter(
+                Chunk.document_id == document_id
+            ).delete()
 
             text = self.extract_text(Path(document.storage_path))
             chunks = self.chunk_text(text)
@@ -28,10 +38,19 @@ class IngestionService:
                 db.add(chunk)
 
             document.status = "processed"
-
             db.commit()
 
             return len(chunks)
+
+        except Exception:
+            db.rollback()
+
+            document = db.get(Document, document_id)
+            if document is not None:
+                document.status = "failed"
+                db.commit()
+
+            raise
 
         finally:
             db.close()
@@ -52,4 +71,3 @@ class IngestionService:
             for i in range(0, len(text), chunk_size)
             if text[i : i + chunk_size].strip()
         ]
-    
