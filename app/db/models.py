@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
@@ -15,14 +15,20 @@ class Document(Base):
         primary_key=True,
         default=lambda: str(uuid4()),
     )
+
     filename: Mapped[str] = mapped_column(String, nullable=False)
     content_type: Mapped[str] = mapped_column(String, nullable=False)
     storage_path: Mapped[str] = mapped_column(String, nullable=False)
-    status: Mapped[str] = mapped_column(String, default="uploaded", nullable=False)
+
+    status: Mapped[str] = mapped_column(
+        String,
+        default="uploaded",
+        nullable=False,
+    )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
 
@@ -40,26 +46,102 @@ class Chunk(Base):
         primary_key=True,
         default=lambda: str(uuid4()),
     )
+
     document_id: Mapped[str] = mapped_column(
         String,
         ForeignKey("documents.id"),
         nullable=False,
     )
 
-    chunk_index: Mapped[int] = mapped_column(Integer, nullable=False)
-    text: Mapped[str] = mapped_column(Text, nullable=False)
-
-    page_number: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    start_char: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    end_char: Mapped[int | None] = mapped_column(Integer, nullable=True)
-
-    embedding_model: Mapped[str | None] = mapped_column(String, nullable=True)
-    faiss_index_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
-
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.utcnow,
+    chunk_index: Mapped[int] = mapped_column(
+        Integer,
         nullable=False,
     )
 
-    document: Mapped[Document] = relationship(back_populates="chunks")
+    text: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+    )
+
+    page_number: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    start_char: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    end_char: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    embedding_model: Mapped[str | None] = mapped_column(
+        String,
+        nullable=True,
+    )
+
+    faiss_index_id: Mapped[int | None] = mapped_column(
+        Integer,
+        nullable=True,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    document: Mapped["Document"] = relationship(
+        back_populates="chunks"
+    )
+
+
+class Conversation(Base):
+    __tablename__ = "conversations"
+
+    id: Mapped[str] = mapped_column(
+        String,
+        primary_key=True,
+        default=lambda: str(uuid4()),
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+
+class Message(Base):
+    __tablename__ = "messages"
+
+    id: Mapped[str] = mapped_column(
+        String,
+        primary_key=True,
+        default=lambda: str(uuid4()),
+    )
+
+    conversation_id: Mapped[str] = mapped_column(
+        String,
+        ForeignKey("conversations.id"),
+        nullable=False,
+    )
+
+    role: Mapped[str] = mapped_column(
+        String,
+        nullable=False,
+    )
+
+    content: Mapped[str] = mapped_column(
+        Text,
+        nullable=False,
+    )
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
