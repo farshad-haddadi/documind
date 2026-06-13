@@ -1,5 +1,5 @@
 from app.services.generation_service import GenerationService
-from app.services.query_router_service import QueryIntent, QueryRouterService
+from app.services.query_router_service import QueryRouterService
 from app.services.reranking_service import RerankingService
 from app.services.search_service import SearchService
 
@@ -41,10 +41,21 @@ class AgentOrchestratorService:
             contexts=contexts,
         )
 
+        citations = [
+            {
+                "source_number": index + 1,
+                "document_id": result["document_id"],
+                "chunk_id": result["chunk_id"],
+                "rerank_score": result.get("rerank_score"),
+            }
+            for index, result in enumerate(reranked_results)
+        ]
+
         return {
             "query": query,
             "intent": intent,
             "document_id": document_id,
             "answer": answer,
+            "citations": citations,
             "sources": reranked_results,
         }

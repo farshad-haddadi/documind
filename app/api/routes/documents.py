@@ -1,6 +1,6 @@
 import threading
 
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, UploadFile
 
 from sqlalchemy.orm import Session
 
@@ -37,12 +37,17 @@ async def upload_document(
 @router.post("/{document_id}/process")
 def process_document(
     document_id: str,
+    background_tasks: BackgroundTasks,
 ):
-    process_document_background(document_id)
+    background_tasks.add_task(
+        process_document_background,
+        document_id,
+    )
 
     return {
-        "message": "Document processed successfully",
+        "message": "Document processing started",
         "document_id": document_id,
+        "status": "processing",
     }
 
 
