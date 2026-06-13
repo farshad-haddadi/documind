@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.db.models import Document
 from app.utils.file_utils import save_upload_file
-
+import os
 
 def create_document(db: Session, file: UploadFile) -> Document:
     document = Document(
@@ -41,3 +41,24 @@ def get_document(
         .filter(Document.id == document_id)
         .first()
     )
+
+def delete_document(
+    db: Session,
+    document_id: str,
+) -> bool:
+    document = (
+        db.query(Document)
+        .filter(Document.id == document_id)
+        .first()
+    )
+
+    if document is None:
+        return False
+
+    if os.path.exists(document.storage_path):
+        os.remove(document.storage_path)
+
+    db.delete(document)
+    db.commit()
+
+    return True

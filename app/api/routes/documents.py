@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_db
 from app.schemas.document import DocumentResponse
-from app.services.document_service import create_document, list_documents, get_document
+from app.services.document_service import create_document, list_documents, get_document, delete_document
 from app.services.ingestion_service import IngestionService
 from app.services.indexing_service import IndexingService
 
@@ -53,4 +53,22 @@ def get_document_by_id(
         "status": document.status,
         "created_at": document.created_at,
         "chunk_count": len(document.chunks),
+    }
+
+@router.delete("/{document_id}")
+def remove_document(
+    document_id: str,
+    db: Session = Depends(get_db),
+):
+    deleted = delete_document(
+        db=db,
+        document_id=document_id,
+    )
+
+    if not deleted:
+        return {"error": "Document not found"}
+
+    return {
+        "message": "Document deleted successfully",
+        "document_id": document_id,
     }
