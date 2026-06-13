@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_db
 from app.schemas.document import DocumentResponse
-from app.services.document_service import create_document, list_documents
+from app.services.document_service import create_document, list_documents, get_document
 from app.services.ingestion_service import IngestionService
 from app.services.indexing_service import IndexingService
 
@@ -35,3 +35,22 @@ def get_documents(
     db: Session = Depends(get_db),
 ):
     return list_documents(db)
+
+@router.get("/{document_id}")
+def get_document_by_id(
+    document_id: str,
+    db: Session = Depends(get_db),
+):
+    document = get_document(db=db, document_id=document_id)
+
+    if document is None:
+        return {"error": "Document not found"}
+
+    return {
+        "id": document.id,
+        "filename": document.filename,
+        "content_type": document.content_type,
+        "status": document.status,
+        "created_at": document.created_at,
+        "chunk_count": len(document.chunks),
+    }

@@ -31,3 +31,13 @@ def list_documents(db: Session) -> list[Document]:
         .order_by(Document.created_at.desc())
         .all()
     )
+
+def get_document(
+    db: Session,
+    document_id: str,
+):
+    return (
+        db.query(Document)
+        .filter(Document.id == document_id)
+        .first()
+    )
