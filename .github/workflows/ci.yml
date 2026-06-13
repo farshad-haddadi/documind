@@ -36,3 +36,7 @@ jobs:
       - name: Import FastAPI app
         run: |
           python -c "from app.main import app; print('DocuMind app imported successfully')"
+
+      - name: Run tests
+        run: |
+          python -m pytest
