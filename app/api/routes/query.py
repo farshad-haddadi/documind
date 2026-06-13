@@ -26,12 +26,17 @@ def get_chunks(
 def ask_question(
     q: str = Query(..., description="Question to answer"),
     top_k: int = Query(3, ge=1, le=10),
+    document_id: str | None = Query(None),
 ):
     search_service = SearchService()
     reranking_service = RerankingService()
     generation_service = GenerationService()
 
-    results = search_service.search(query=q, top_k=10)
+    results = search_service.search(
+      query=q,
+      top_k=10,
+      document_id=document_id,
+    )
 
     reranked_results = reranking_service.rerank(
         query=q,
@@ -51,6 +56,7 @@ def ask_question(
 
     return {
         "question": q,
+        "document_id": document_id,
         "answer": answer,
         "sources": reranked_results,
     }

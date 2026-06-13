@@ -24,3 +24,10 @@ def create_document(db: Session, file: UploadFile) -> Document:
     db.refresh(document)
 
     return document
+
+def list_documents(db: Session) -> list[Document]:
+    return (
+        db.query(Document)
+        .order_by(Document.created_at.desc())
+        .all()
+    )

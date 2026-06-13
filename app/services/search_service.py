@@ -12,7 +12,7 @@ class SearchService:
         self.settings = get_settings()
         self.embedder = EmbeddingService()
 
-    def search(self, query: str, top_k: int = 5):
+    def search(self,query: str,top_k: int = 5,document_id: str | None = None,):
         index = faiss.read_index(
             self.settings.faiss_index_path
         )
@@ -33,13 +33,19 @@ class SearchService:
             results = []
 
             for faiss_id in indices[0]:
-                chunk = (
-                    db.query(Chunk)
-                    .filter(
-                        Chunk.faiss_index_id == int(faiss_id)
-                    )
-                    .first()
+                query_builder = (
+                     db.query(Chunk)
+                     .filter(
+                     Chunk.faiss_index_id == int(faiss_id)
+                        )
                 )
+
+                if document_id:
+                    query_builder = query_builder.filter(
+                       Chunk.document_id == document_id
+                )
+
+                chunk = query_builder.first()
 
                 if chunk:
                     results.append(

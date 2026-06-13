@@ -3,9 +3,11 @@ from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_db
 from app.schemas.document import DocumentResponse
-from app.services.document_service import create_document
+from app.services.document_service import create_document, list_documents
 from app.services.ingestion_service import IngestionService
 from app.services.indexing_service import IndexingService
+
+
 
 router = APIRouter(
     prefix="/documents",
@@ -27,3 +29,9 @@ async def upload_document(
     indexing_service.build_index()
 
     return document
+
+@router.get("", response_model=list[DocumentResponse])
+def get_documents(
+    db: Session = Depends(get_db),
+):
+    return list_documents(db)
