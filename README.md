@@ -1,30 +1,16 @@
 # DocuMind
 
-An Agentic Conversational RAG (Retrieval-Augmented Generation) platform built with FastAPI, PostgreSQL, Docker, FAISS, and OpenAI.
-
-DocuMind allows users to upload documents, retrieve relevant information using semantic search, and interact with documents through natural language conversations.
+DocuMind is a document management API built with FastAPI, PostgreSQL, and Docker. The project provides a foundation for document storage, metadata management, and retrieval through a RESTful API.
 
 ---
 
-## Live Demo
+## Overview
 
-### Swagger UI
-
-http://52.14.237.47:8001/docs
-
-### Health Check
-
-http://52.14.237.47:8001/health
+The application exposes document management endpoints through FastAPI and persists document metadata in PostgreSQL. The entire stack is containerized with Docker and deployed on AWS EC2.
 
 ---
 
-## Screenshots
-
-### Swagger API Documentation
-
-![Swagger UI](docs/images/swagger-ui.png)
-
-### System Architecture
+## Architecture
 
 ![Architecture](docs/images/architecture.png)
 
@@ -32,134 +18,69 @@ http://52.14.237.47:8001/health
 
 ## Features
 
-- Document Upload API
-- Conversational RAG Pipeline
-- Semantic Search
-- Vector Similarity Search with FAISS
-- PostgreSQL Persistence
-- OpenAI LLM Integration
-- Dockerized Deployment
-- AWS EC2 Hosting
-- RESTful APIs
-- Health Monitoring Endpoint
-- Automated Testing with Pytest
+- FastAPI REST API
+- PostgreSQL persistence layer
+- SQLAlchemy ORM
+- Alembic database migrations
+- Dockerized deployment
+- OpenAPI / Swagger documentation
+- AWS EC2 deployment
+- Health monitoring endpoint
 
 ---
 
-## Architecture
+## Technology Stack
 
-```text
-User
-  │
-  ▼
-FastAPI
-  │
-  ├── Document Upload
-  ├── Query API
-  ├── Chat API
-  │
-  ▼
-RAG Pipeline
-  │
-  ├── Chunking
-  ├── Embedding Generation
-  ├── Vector Search (FAISS)
-  ├── Context Retrieval
-  │
-  ▼
-OpenAI LLM
-  │
-  ▼
-Response Generation
-```
-
-A visual architecture diagram can be found below:
-
-![Architecture](docs/images/architecture.png)
+| Component | Technology |
+|------------|------------|
+| Backend | FastAPI |
+| Database | PostgreSQL |
+| ORM | SQLAlchemy |
+| Migrations | Alembic |
+| API Documentation | Swagger / OpenAPI |
+| Containerization | Docker |
+| Orchestration | Docker Compose |
+| Cloud Platform | AWS EC2 |
 
 ---
 
-## Tech Stack
+## API Documentation
 
-### Backend
+Interactive API documentation is available at:
 
-- FastAPI
-- Python 3.11
+http://52.14.237.47:8001/docs
 
-### Database
+Health endpoint:
 
-- PostgreSQL
-
-### AI / RAG
-
-- OpenAI GPT-4.1 Mini
-- FAISS
-- Sentence Transformers
-- BGE Embeddings
-- Cross Encoder Reranking
-
-### Infrastructure
-
-- Docker
-- Docker Compose
-- AWS EC2
-
-### Testing
-
-- Pytest
-
----
-
-## Project Structure
-
-```text
-documind/
-│
-├── app/
-│   ├── api/
-│   ├── core/
-│   ├── db/
-│   ├── rag/
-│   └── schemas/
-│
-├── tests/
-│
-├── docs/
-│   └── images/
-│
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
-```
+http://52.14.237.47:8001/health
 
 ---
 
 ## API Endpoints
 
-### Health
+| Method | Endpoint | Description |
+|----------|----------|-------------|
+| GET | /health | Service health check |
+| GET | /documents | Retrieve all documents |
+| GET | /documents/{document_id} | Retrieve a document |
+| POST | /documents | Create a document |
+| DELETE | /documents/{document_id} | Delete a document |
 
-```http
-GET /health
-```
+---
 
-### Documents
+## Screenshots
 
-```http
-POST /documents/upload
-```
+### Swagger UI
 
-### Query
+![Swagger UI](docs/images/swagger-ui.png)
 
-```http
-POST /query
-```
+### AWS Deployment
 
-### Chat
+![AWS Deployment](docs/images/aws-deployment.png)
 
-```http
-POST /chat
-```
+### Document API
+
+![Document API](docs/images/document-api.png)
 
 ---
 
@@ -172,121 +93,84 @@ git clone https://github.com/farshad-haddadi/documind.git
 cd documind
 ```
 
-### Create Environment File
+### Configure Environment
 
-```bash
-cp .env.example .env
+Create a `.env` file:
+
+```env
+APP_NAME=DocuMind
+APP_ENV=local
+APP_VERSION=0.1.0
+
+DATABASE_URL=postgresql+psycopg://documind:documind@postgres:5432/documind
+
+EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
+RERANKER_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2
+
+FAISS_INDEX_PATH=data/indexes/documind.faiss
+
+OPENAI_API_KEY=YOUR_API_KEY
+OPENAI_MODEL=gpt-4.1-mini
 ```
 
-### Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### Run Application
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Application will be available at:
-
-```text
-http://localhost:8000
-```
-
----
-
-## Docker Deployment
-
-### Build Containers
-
-```bash
-docker-compose up --build
-```
-
-### Run In Background
+### Start Services
 
 ```bash
 docker-compose up -d
 ```
 
-### Verify Containers
+### Run Database Migrations
 
 ```bash
-docker ps
+docker-compose exec api alembic upgrade head
 ```
 
 ---
 
-## AWS Deployment
+## Deployment
 
-DocuMind is deployed on AWS EC2 using Docker Compose.
+The application is deployed on AWS EC2 using Docker Compose.
 
-### Infrastructure
-
-- AWS EC2 (Ubuntu 24.04 LTS)
-- Docker
-- Docker Compose
-- PostgreSQL Container
-- FastAPI Container
-
-### Public URLs
-
-```text
-http://52.14.237.47:8001/docs
-```
-
-```text
-http://52.14.237.47:8001/health
-```
-
----
-
-## Testing
-
-Run tests:
+To verify the deployment:
 
 ```bash
-pytest
+curl http://localhost:8001/health
 ```
 
-Example output:
+Expected response:
+
+```json
+{
+  "status": "healthy",
+  "service": "DocuMind",
+  "version": "0.1.0",
+  "environment": "local"
+}
+```
+
+---
+
+## Repository Structure
 
 ```text
-1 passed
+documind/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── alembic/
+├── app/
+├── data/
+├── docs/
+│   └── images/
+├── tests/
+├── .env.example
+├── .gitignore
+├── alembic.ini
+├── docker-compose.yml
+├── Dockerfile
+├── requirements.txt
+└── README.md
 ```
-
----
-
-## Future Improvements
-
-- Multi-document collections
-- User authentication
-- Role-based access control
-- Streaming responses
-- Hybrid search
-- Evaluation framework
-- Observability and monitoring
-- CI/CD pipeline with GitHub Actions
-- HTTPS and custom domain
-- Kubernetes deployment
-
----
-
-## Lessons Learned
-
-This project demonstrates:
-
-- Building production-ready FastAPI services
-- Designing Retrieval-Augmented Generation systems
-- Vector databases and semantic search
-- Docker containerization
-- PostgreSQL integration
-- Cloud deployment on AWS EC2
-- API documentation with Swagger
-- Software testing practices
 
 ---
 
@@ -294,11 +178,6 @@ This project demonstrates:
 
 **Farshad Haddadi**
 
-GitHub:
+GitHub: https://github.com/farshad-haddadi
 
-https://github.com/farshad-haddadi
-
-LinkedIn:
-
-https://www.linkedin.com/in/farshad-haddadi-b932a7346
-
+LinkedIn: https://www.linkedin.com/in/farshad-haddadi-b932a7346
