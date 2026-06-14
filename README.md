@@ -31,7 +31,7 @@ Or click here:
 - Asynchronous document ingestion
 - PDF text extraction
 - Intelligent text chunking
-- OpenAI embedding generation
+- SentenceTransformer embedding generation
 - Vector indexing
 
 ### Semantic Search
@@ -80,7 +80,7 @@ The system combines FastAPI, PostgreSQL, OpenAI GPT, and an Agentic RAG pipeline
 | Backend | FastAPI |
 | Database | PostgreSQL |
 | LLM | OpenAI GPT |
-| Embeddings | OpenAI Embeddings |
+| Embeddings | SentenceTransformers (Hugging Face) |
 | Search | Vector Similarity Search |
 | Reranking | Cross-Encoder Reranking |
 | Containerization | Docker |
