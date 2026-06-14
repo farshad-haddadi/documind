@@ -52,7 +52,7 @@ DocuMind enables users to upload PDF documents, generate embeddings, perform sem
 
 # System Architecture
 
-![System Architecture](docs/architecture.png)
+![System Architecture](docs/screenshots/architecture.png)
 
 **Figure 1. High-Level Architecture of the DocuMind Agentic RAG Platform**
 
@@ -80,7 +80,7 @@ The system combines FastAPI, PostgreSQL, OpenAI GPT, and an Agentic RAG pipeline
 
 Interactive API documentation is available through Swagger UI.
 
-![Swagger UI](docs/swagger-home.png)
+![Swagger UI](docs/screenshots/swagger-home.png)
 
 **Figure 2. Swagger/OpenAPI Documentation**
 
@@ -94,7 +94,7 @@ Endpoint:
 GET /health
 ```
 
-![Health Check](docs/health-check.png)
+![Health Check](docs/screenshots/health-check.png)
 
 **Figure 3. Health Monitoring Endpoint**
 
@@ -121,7 +121,7 @@ Endpoint:
 POST /documents/upload
 ```
 
-![Document Upload](docs/upload-document.png)
+![Document Upload](docs/screenshots/upload-document.png)
 
 **Figure 4. PDF Document Upload**
 
@@ -155,7 +155,7 @@ Endpoint:
 POST /documents/{document_id}/process
 ```
 
-![Background Processing](docs/background-processing.png)
+![Background Processing](docs/screenshots/background-processing.png)
 
 **Figure 5. Asynchronous Document Processing Pipeline**
 
@@ -181,7 +181,7 @@ Endpoint:
 GET /documents/{document_id}
 ```
 
-![Document Status](docs/document-status.png)
+![Document Status](docs/screenshots/document-status.png)
 
 **Figure 6. Processed Document Metadata**
 
@@ -215,7 +215,7 @@ Parameters:
 | q | Search query |
 | top_k | Number of chunks returned |
 
-![Semantic Search](docs/semantic-search.png)
+![Semantic Search](docs/screenshots/semantic-search.png)
 
 **Figure 7. Vector-Based Semantic Retrieval**
 
@@ -252,7 +252,7 @@ Parameters:
 | top_k | Retrieved chunks |
 | document_id | Optional document filter |
 
-![Question Answering](docs/agentic-rag-question-answering.png)
+![Question Answering](docs/screenshots/agentic-rag-question-answering.png)
 
 **Figure 8. Citation-Grounded Question Answering**
 
@@ -310,7 +310,7 @@ Follow-up Request:
 }
 ```
 
-![Conversation Memory](docs/chat-conversation-memory.png)
+![Conversation Memory](docs/screenshots/chat-conversation-memory.png)
 
 **Figure 9. Persistent Conversation Memory**
 
