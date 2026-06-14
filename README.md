@@ -398,4 +398,4 @@ Data Science Specialist & Computer Science Major
 
 GitHub: https://github.com/farshad-haddadi
 
-LinkedIn: https://www.linkedin.com/in/farshad-haddadi
+LinkedIn: https://www.linkedin.com/in/farshad-haddadi-b932a7346
