@@ -1,143 +1,104 @@
-# DocuMind
+# DocuMind – Agentic Conversational RAG Platform
 
-DocuMind is a document management API built with FastAPI, PostgreSQL, and Docker. The project provides a foundation for document storage, metadata management, and retrieval through a RESTful API.
+An end-to-end Agentic Retrieval-Augmented Generation (RAG) platform built with FastAPI, PostgreSQL, OpenAI, and Docker.
 
----
-
-## Overview
-
-The application exposes document management endpoints through FastAPI and persists document metadata in PostgreSQL. The entire stack is containerized with Docker and deployed on AWS EC2.
-
----
-
-## Architecture
-
-![Architecture](docs/images/architecture.png)
+DocuMind enables users to upload PDF documents, generate embeddings, perform semantic search, answer questions with citations, and maintain persistent conversational memory across sessions.
 
 ---
 
 ## Features
 
-- FastAPI REST API
-- PostgreSQL persistence layer
-- SQLAlchemy ORM
-- Alembic database migrations
-- Dockerized deployment
-- OpenAPI / Swagger documentation
-- AWS EC2 deployment
-- Health monitoring endpoint
+### Document Management
+- Upload PDF documents
+- Store document metadata
+- Track document processing status
+- Delete documents and associated chunks
+
+### Background Processing
+- Asynchronous document ingestion
+- PDF text extraction
+- Intelligent text chunking
+- OpenAI embedding generation
+- Vector indexing
+
+### Semantic Search
+- Embedding-based retrieval
+- Top-K chunk search
+- Document filtering
+- Similarity ranking
+
+### Agentic RAG Pipeline
+- Query understanding
+- Semantic retrieval
+- Reranking
+- GPT-based answer generation
+- Source citation support
+
+### Conversational Memory
+- Session-based chat history
+- Persistent memory storage
+- Multi-turn conversations
+- Context-aware responses
+
+### Infrastructure
+- FastAPI backend
+- PostgreSQL database
+- OpenAI integration
+- Docker containerization
+- Swagger/OpenAPI documentation
+- AWS deployment ready
 
 ---
 
-## Technology Stack
+# System Architecture
 
-| Component | Technology |
-|------------|------------|
+![System Architecture](docs/architecture.png)
+
+**Figure 1. High-Level Architecture of the DocuMind Agentic RAG Platform**
+
+The system combines FastAPI, PostgreSQL, OpenAI GPT, and an Agentic RAG pipeline. Uploaded documents are transformed into embeddings and stored for retrieval. User questions are processed through retrieval, reranking, and answer generation while maintaining conversational memory.
+
+---
+
+# Technology Stack
+
+| Layer | Technology |
+|---------|------------|
 | Backend | FastAPI |
 | Database | PostgreSQL |
-| ORM | SQLAlchemy |
-| Migrations | Alembic |
-| API Documentation | Swagger / OpenAPI |
+| LLM | OpenAI GPT |
+| Embeddings | OpenAI Embeddings |
+| Search | Vector Similarity Search |
+| Reranking | Cross-Encoder Reranking |
 | Containerization | Docker |
-| Orchestration | Docker Compose |
-| Cloud Platform | AWS EC2 |
+| Deployment | AWS EC2 |
+| Documentation | Swagger/OpenAPI |
 
 ---
 
-## API Documentation
+# API Documentation
 
-Interactive API documentation is available at:
+Interactive API documentation is available through Swagger UI.
 
-http://52.14.237.47:8001/docs
+![Swagger UI](docs/swagger-home.png)
 
-Health endpoint:
-
-http://52.14.237.47:8001/health
+**Figure 2. Swagger/OpenAPI Documentation**
 
 ---
 
-## API Endpoints
+# Health Check Endpoint
 
-| Method | Endpoint | Description |
-|----------|----------|-------------|
-| GET | /health | Service health check |
-| GET | /documents | Retrieve all documents |
-| GET | /documents/{document_id} | Retrieve a document |
-| POST | /documents | Create a document |
-| DELETE | /documents/{document_id} | Delete a document |
+Endpoint:
 
----
-
-## Screenshots
-
-### Swagger UI
-
-![Swagger UI](docs/images/swagger-ui.png)
-
-### AWS Deployment
-
-![AWS Deployment](docs/images/aws-deployment.png)
-
-### Document API
-
-![Document API](docs/images/document-api.png)
-
----
-
-## Local Development
-
-### Clone Repository
-
-```bash
-git clone https://github.com/farshad-haddadi/documind.git
-cd documind
+```http
+GET /health
 ```
 
-### Configure Environment
+![Health Check](docs/health-check.png)
 
-Create a `.env` file:
+**Figure 3. Health Monitoring Endpoint**
 
-```env
-APP_NAME=DocuMind
-APP_ENV=local
-APP_VERSION=0.1.0
-
-DATABASE_URL=postgresql+psycopg://documind:documind@postgres:5432/documind
-
-EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
-RERANKER_MODEL=cross-encoder/ms-marco-MiniLM-L-6-v2
-
-FAISS_INDEX_PATH=data/indexes/documind.faiss
-
-OPENAI_API_KEY=YOUR_API_KEY
-OPENAI_MODEL=gpt-4.1-mini
-```
-
-### Start Services
-
-```bash
-docker-compose up -d
-```
-
-### Run Database Migrations
-
-```bash
-docker-compose exec api alembic upgrade head
-```
-
----
-
-## Deployment
-
-The application is deployed on AWS EC2 using Docker Compose.
-
-To verify the deployment:
-
-```bash
-curl http://localhost:8001/health
-```
-
-Expected response:
+Example Response:
 
 ```json
 {
@@ -150,34 +111,278 @@ Expected response:
 
 ---
 
-## Repository Structure
+# Document Upload
 
-```text
-documind/
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── alembic/
-├── app/
-├── data/
-├── docs/
-│   └── images/
-├── tests/
-├── .env.example
-├── .gitignore
-├── alembic.ini
-├── docker-compose.yml
-├── Dockerfile
-├── requirements.txt
-└── README.md
+Users can upload PDF documents for indexing and retrieval.
+
+Endpoint:
+
+```http
+POST /documents/upload
+```
+
+![Document Upload](docs/upload-document.png)
+
+**Figure 4. PDF Document Upload**
+
+Example Response:
+
+```json
+{
+  "id": "document-id",
+  "filename": "resume.pdf",
+  "status": "uploaded"
+}
 ```
 
 ---
 
-## Author
+# Background Document Processing
+
+After upload, documents are processed asynchronously.
+
+Processing steps:
+
+1. Extract PDF text
+2. Split into chunks
+3. Generate embeddings
+4. Store vectors
+5. Update document status
+
+Endpoint:
+
+```http
+POST /documents/{document_id}/process
+```
+
+![Background Processing](docs/background-processing.png)
+
+**Figure 5. Asynchronous Document Processing Pipeline**
+
+Example Response:
+
+```json
+{
+  "message": "Document processing started",
+  "document_id": "document-id",
+  "status": "processing"
+}
+```
+
+---
+
+# Document Status Tracking
+
+Retrieve document metadata and processing status.
+
+Endpoint:
+
+```http
+GET /documents/{document_id}
+```
+
+![Document Status](docs/document-status.png)
+
+**Figure 6. Processed Document Metadata**
+
+Example Response:
+
+```json
+{
+  "id": "document-id",
+  "filename": "resume.pdf",
+  "status": "processed",
+  "chunk_count": 3
+}
+```
+
+---
+
+# Semantic Search
+
+Retrieve the most relevant chunks using vector similarity search.
+
+Endpoint:
+
+```http
+GET /query/chunks
+```
+
+Parameters:
+
+| Parameter | Description |
+|------------|-------------|
+| q | Search query |
+| top_k | Number of chunks returned |
+
+![Semantic Search](docs/semantic-search.png)
+
+**Figure 7. Vector-Based Semantic Retrieval**
+
+Example Query:
+
+```text
+machine learning
+```
+
+---
+
+# Agentic RAG Question Answering
+
+The Agentic RAG pipeline performs:
+
+1. Intent classification
+2. Semantic retrieval
+3. Reranking
+4. Context construction
+5. GPT answer generation
+6. Citation generation
+
+Endpoint:
+
+```http
+GET /query/ask
+```
+
+Parameters:
+
+| Parameter | Description |
+|------------|-------------|
+| q | User question |
+| top_k | Retrieved chunks |
+| document_id | Optional document filter |
+
+![Question Answering](docs/agentic-rag-question-answering.png)
+
+**Figure 8. Citation-Grounded Question Answering**
+
+Example Query:
+
+```text
+Summarize this CV
+```
+
+Example Response:
+
+```json
+{
+  "query": "Summarize this CV",
+  "intent": "summarization",
+  "answer": "...",
+  "citations": [...]
+}
+```
+
+---
+
+# Conversation Memory
+
+DocuMind supports persistent conversational memory using PostgreSQL.
+
+Capabilities:
+
+- Multi-turn conversations
+- Context preservation
+- Session memory
+- Memory-aware responses
+
+Endpoint:
+
+```http
+POST /chat
+```
+
+Example Request:
+
+```json
+{
+  "session_id": "demo-session",
+  "message": "My name is Farshad"
+}
+```
+
+Follow-up Request:
+
+```json
+{
+  "session_id": "demo-session",
+  "message": "What is my name?"
+}
+```
+
+![Conversation Memory](docs/chat-conversation-memory.png)
+
+**Figure 9. Persistent Conversation Memory**
+
+Example Response:
+
+```json
+{
+  "answer": "Your name is Farshad Haddadi."
+}
+```
+
+---
+
+# Running Locally
+
+Clone the repository:
+
+```bash
+git clone https://github.com/farshad-haddadi/documind.git
+cd documind
+```
+
+Create environment variables:
+
+```bash
+cp .env.example .env
+```
+
+Build and start services:
+
+```bash
+docker compose up -d --build
+```
+
+Run database migrations:
+
+```bash
+alembic upgrade head
+```
+
+Open Swagger UI:
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+# Deployment
+
+DocuMind can be deployed using Docker on:
+
+- AWS EC2
+- Azure VM
+- Google Cloud VM
+- DigitalOcean Droplets
+
+Production deployment includes:
+
+- Docker Compose orchestration
+- PostgreSQL persistence
+- OpenAI integration
+- Health monitoring endpoint
+
+---
+# Author
 
 **Farshad Haddadi**
 
+University of Toronto  
+Data Science Specialist & Computer Science Major
+
 GitHub: https://github.com/farshad-haddadi
 
-LinkedIn: https://www.linkedin.com/in/farshad-haddadi-b932a7346
+LinkedIn: https://www.linkedin.com/in/farshad-haddadi
