@@ -5,6 +5,19 @@ An end-to-end Agentic Retrieval-Augmented Generation (RAG) platform built with F
 DocuMind enables users to upload PDF documents, generate embeddings, perform semantic search, answer questions with citations, and maintain persistent conversational memory across sessions.
 
 ---
+## Live Demo
+
+Swagger API Documentation
+
+**API URL:**  
+http://52.14.237.47:8001/docs
+
+Or click here:
+
+[Open DocuMind API Documentation](http://52.14.237.47:8001/docs)
+
+
+
 
 ## Features
 
